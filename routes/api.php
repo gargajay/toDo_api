@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ToDoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/me', [AuthController::class,'me']);
+    Route::get('/me', [ToDoController::class,'me']);
+
+    Route::group(['prefix' => 'todo', 'as' => 'todo.'], function () {
+        Route::post('add', [ToDoController::class,'add'])->name('add');
+        Route::post('status-update', [ToDoController::class,'statusUpdate'])->name('status-update');
+        Route::get('list', [ToDoController::class,'list'])->name('list');
+        Route::post('delete', [ToDoController::class,'delete'])->name('delete');
+         
+      
+    });
+
+
 });
+
+
+Route::post('/register',[AuthController::class,'register']);
+
+Route::post('/login', [AuthController::class, 'login']);
